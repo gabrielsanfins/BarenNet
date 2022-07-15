@@ -1,9 +1,10 @@
 import tensorflow as tf
+from tensorflow.keras import regularizers
 
-def Create_Similarity_Model(n_nonsimilar, n_similar):
+def Create_Similarity_Model(n_nonsimilar, n_similar, regularizer = 0.01):
     '''
     
-    Function that creates a neural network to discover incomplete similarities in the last n_similar paramaters of our data
+    Function that creates a neural network to discover incomplete similarities in the last n_similar paramaters of a dataset
     
     '''
     inputs = tf.keras.Input(shape = (n_nonsimilar +  n_similar,))
@@ -17,7 +18,7 @@ def Create_Similarity_Model(n_nonsimilar, n_similar):
     # build the exponential layer to represent the inputs of our Phi_1 function
     for i in range(n_nonsimilar):
         nonsimilar_parameters[i] = tf.keras.layers.Lambda(lambda x : x[:,i:i+1])(inputs)
-        Phi1_lists_nonsimilar[i] = tf.keras.layers.Dense(1, activation = 'exponential', use_bias = False, name = 'similarity_layer_' + str(i+1))(similar_parameters)
+        Phi1_lists_nonsimilar[i] = tf.keras.layers.Dense(1, activation = 'exponential', use_bias = False, kernel_regularizer = regularizers.L2(regularizer), name = 'similarity_layer_' + str(i+1))(similar_parameters)
         Phi1_lists_similar[i] = tf.keras.layers.Lambda(lambda x : tf.exp(x))(nonsimilar_parameters[i])
         Phi1_input_list[i] = tf.keras.layers.Multiply()([Phi1_lists_nonsimilar[i], Phi1_lists_similar[i]])
     Phi1_input = tf.keras.layers.Concatenate()(Phi1_input_list)
@@ -29,7 +30,7 @@ def Create_Similarity_Model(n_nonsimilar, n_similar):
     phi1 = tf.keras.layers.Dense(1, activation = 'relu')(dense3)
 
     # build the layer for the multiplication of the similar parameters
-    multiplication_layer = tf.keras.layers.Dense(1, activation = 'exponential', use_bias = False, name = 'multiplication_layer')(similar_parameters)
+    multiplication_layer = tf.keras.layers.Dense(1, activation = 'exponential', use_bias = False, kernel_regularizer = regularizers.L2(regularizer), name = 'multiplication_layer')(similar_parameters)
 
     outputs = tf.keras.layers.Multiply()([phi1, multiplication_layer])
 
