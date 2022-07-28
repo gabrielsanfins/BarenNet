@@ -21,7 +21,10 @@ def Create_Similarity_Model(n_nonsimilar, n_similar):
         Phi1_lists_nonsimilar[i] = tf.keras.layers.Dense(1, activation = 'exponential', use_bias = False, name = 'similarity_layer_' + str(i+1))(similar_parameters)
         Phi1_lists_similar[i] = tf.keras.layers.Lambda(lambda x : tf.exp(x))(nonsimilar_parameters[i])
         Phi1_input_list[i] = tf.keras.layers.Multiply()([Phi1_lists_nonsimilar[i], Phi1_lists_similar[i]])
-    Phi1_input = tf.keras.layers.Concatenate()(Phi1_input_list)
+    if n_nonsimilar == 1:
+        Phi1_input = Phi1_input_list[0]
+    else:
+        Phi1_input = tf.keras.layers.Concatenate()(Phi1_input_list)
 
     # build the dense layers in order to fit our similarity function
     dense1 = tf.keras.layers.Dense(128, activation = 'relu')(Phi1_input)
