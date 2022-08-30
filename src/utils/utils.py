@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tensorflow.keras import regularizers
+# from tensorflow.keras import regularizers
 
 def Create_Similarity_Model(n_nonsimilar, n_similar):
     '''
