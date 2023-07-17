@@ -16,6 +16,27 @@ def Create_Similarity_Model(n_nonsimilar, n_similar):
     Phi1_lists_similar = tf.keras.layers.Lambda(lambda x : tf.exp(x))(nonsimilar_parameters)
     Phi1_input = tf.keras.layers.Multiply()([Phi1_lists_nonsimilar, Phi1_lists_similar])
 
+    # Without batch normalization
+
+    activation_function = 'relu'
+
+    dense1 = tf.keras.layers.Dense(256, activation = activation_function)(Phi1_input)
+    dense2 = tf.keras.layers.Dense(128, activation = activation_function)(dense1)
+    dense3 = tf.keras.layers.Dense(64, activation = activation_function)(dense2)
+    dense4 = tf.keras.layers.Dense(32, activation = activation_function)(dense3)
+    dense5 = tf.keras.layers.Dense(16, activation = activation_function)(dense4)
+    phi1 = tf.keras.layers.Dense(1, activation = None)(dense5)
+
+
+    # build the layer for the multiplication of the similar parameters
+    multiplication_layer = tf.keras.layers.Dense(1, activation = None, use_bias = False, name = 'multiplication_layer')(similar_parameters)
+
+    outputs = tf.keras.layers.Add()([phi1, multiplication_layer])
+
+    model = tf.keras.Model(inputs = inputs, outputs = outputs)
+
+    return model
+
     # # build the dense layers in order to fit our similarity function
     # dense1 = tf.keras.layers.Dense(256, activation = 'gelu')(Phi1_input)
     # bn1 = tf.keras.layers.BatchNormalization()(dense1)
@@ -28,22 +49,3 @@ def Create_Similarity_Model(n_nonsimilar, n_similar):
     # dense5 = tf.keras.layers.Dense(16, activation = 'gelu')(bn4)
     # bn5 = tf.keras.layers.BatchNormalization()(dense5)
     # phi1 = tf.keras.layers.Dense(1, activation = None)(bn5)
-
-    # Without batch normalization
-
-    dense1 = tf.keras.layers.Dense(256, activation = 'gelu')(Phi1_input)
-    dense2 = tf.keras.layers.Dense(128, activation = 'gelu')(dense1)
-    dense3 = tf.keras.layers.Dense(64, activation = 'gelu')(dense2)
-    dense4 = tf.keras.layers.Dense(32, activation = 'gelu')(dense3)
-    dense5 = tf.keras.layers.Dense(16, activation = 'gelu')(dense4)
-    phi1 = tf.keras.layers.Dense(1, activation = None)(dense5)
-
-
-    # build the layer for the multiplication of the similar parameters
-    multiplication_layer = tf.keras.layers.Dense(1, activation = None, use_bias = False, name = 'multiplication_layer')(similar_parameters)
-
-    outputs = tf.keras.layers.Add()([phi1, multiplication_layer])
-
-    model = tf.keras.Model(inputs = inputs, outputs = outputs)
-
-    return model
