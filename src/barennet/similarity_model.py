@@ -1,5 +1,8 @@
 from typing import List, Dict
 
+from .group_calculations import (
+    find_buckingham_group_exponents_from_construction_dict)
+
 
 class SimilarityModel:
 
@@ -51,8 +54,19 @@ class SimilarityModel:
         """
         similarity_dic = {}
         for nd_key in self.non_dimensional_params_construction.keys():
-            dimensional_dic = self.non_dimensional_params_construction[nd_key]
-            exponents_dict = {}
+            dimensional_dict = self.non_dimensional_params_construction[nd_key]
+            independent_parameters = self.dimensionally_independent_params
+            dependent_parameters = self.dimensionally_dependent_params
+
+            dimensionally_dependent_key, exponents_dict = (
+                find_buckingham_group_exponents_from_construction_dict(
+                    dimensional_dict=dimensional_dict,
+                    dimensionally_independent_params=independent_parameters,
+                    dimensionally_dependent_params=dependent_parameters
+                )
+            )
+
+            similarity_dic[dimensionally_dependent_key] = exponents_dict
 
             # Firts we find the exponent associated with the dimensionally
             # dependent parameter
