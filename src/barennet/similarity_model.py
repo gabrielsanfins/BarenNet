@@ -41,9 +41,9 @@ class SimilarityModel:
         self.n_nonsimilar = n_nonsimilar
         self.n_similar = n_similar
 
-        self.create_buckingham_similarity_group()
+        self._create_buckingham_similarity_group()
 
-    def create_buckingham_similarity_group(self) -> None:
+    def _create_buckingham_similarity_group(self) -> None:
         """
 
         Function that calculates the Buckingham similarity group from the
