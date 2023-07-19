@@ -68,17 +68,18 @@ class SimilarityModel:
 
             similarity_dic[dimensionally_dependent_key] = exponents_dict
 
-            # Firts we find the exponent associated with the dimensionally
-            # dependent parameter
-            for dimensional_key in dimensional_dic.keys():
-                if dimensional_key in self.dimensionally_dependent_params:
-                    gamma = dimensional_dic[dimensional_key]
-                    dimensionally_dependent_key = dimensional_key
+        for nd_key in self.non_dimensional_qoi_construction.keys():
+            dimensional_dict = self.non_dimensional_qoi_construction[nd_key]
+            independent_parameters = self.dimensionally_independent_params
+            dependent_parameters = self.dimensional_qoi
 
-            for dimensional_key in dimensional_dic.keys():
-                if dimensional_key in self.dimensionally_independent_params:
-                    exponents_dict[dimensional_key] = (
-                        - dimensional_dic[dimensional_key] / gamma)
+            dimensionally_dependent_key, exponents_dict = (
+                find_buckingham_group_exponents_from_construction_dict(
+                    dimensional_dict=dimensional_dict,
+                    dimensionally_independent_params=independent_parameters,
+                    dimensionally_dependent_params=dependent_parameters
+                )
+            )
 
             similarity_dic[dimensionally_dependent_key] = exponents_dict
 
