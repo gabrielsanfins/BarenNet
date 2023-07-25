@@ -6,6 +6,8 @@ from .group_calculations import (
 
 from .barennet import create_barennet
 
+from utils import adjust_dataframe_according_to_similarity
+
 
 class SimilarityModel:
 
@@ -37,6 +39,19 @@ class SimilarityModel:
                              "dimensionally dependent parameters list.")
 
         self.data_path = data_path
+
+        if data_path == "":
+            pass
+        else:
+            self.df_log_x, self.df_log_y = (
+                adjust_dataframe_according_to_similarity(
+                    data_path=data_path,
+                    non_similar_params=non_similar_params,
+                    similar_params=similar_params,
+                    non_dimensional_qoi=non_dimensional_qoi
+                )
+            )
+
         self.dimensionally_independent_params = (
                                             dimensionally_independent_params)
         self.dimensionally_dependent_params = dimensionally_dependent_params
@@ -47,6 +62,7 @@ class SimilarityModel:
         self.non_dimensional_qoi_construction = non_dimesional_qoi_construction
         self.non_similar_params = non_similar_params
         self.similar_params = similar_params
+        self.found_incomplete_similarity = False
 
         self._create_buckingham_similarity_group()
 
