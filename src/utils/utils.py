@@ -1,14 +1,18 @@
 import tensorflow as tf
+import pandas as pd
+import numpy as np
+from typing import List, Tuple
 # from tensorflow.keras import regularizers
+
 
 def Create_Similarity_Model(n_nonsimilar, n_similar):
     '''
-    
+
     Function that creates a neural network to discover incomplete similarities in the last n_similar paramaters of a dataset
-    
+
     '''
 
-    inputs = tf.keras.Input(shape = (n_nonsimilar +  n_similar,))
+    inputs = tf.keras.Input(shape=(n_nonsimilar + n_similar,))
 
     similar_parameters = tf.keras.layers.Lambda(lambda x : x[:, n_nonsimilar:])(inputs)
     nonsimilar_parameters = tf.keras.layers.Lambda(lambda x : x[:, :n_nonsimilar])(inputs)
@@ -49,3 +53,43 @@ def Create_Similarity_Model(n_nonsimilar, n_similar):
     # dense5 = tf.keras.layers.Dense(16, activation = 'gelu')(bn4)
     # bn5 = tf.keras.layers.BatchNormalization()(dense5)
     # phi1 = tf.keras.layers.Dense(1, activation = None)(bn5)
+
+
+def adjust_dataframe_according_to_similarity(
+        data_path: str,
+        non_similar_params: List[str],
+        similar_params: List[str],
+        non_dimensional_qoi: List[str]) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """
+
+    Makes the appropriate ordering of the Dataframe collumns so that it follows
+    the order specified in the non-similar and similar parameters lists.
+
+    The method also makes the log transformation in the DataFrame in order to
+    make it suitable for the BarenNet.
+
+    """
+    original_df = pd.read_excel(data_path)
+
+    dic_x = {}
+    dic_y = {}
+
+    for label in non_similar_params:
+        label_values = original_df.loc[:, label].to_numpy()
+        log_values = np.log(label_values)
+        dic_x[label] = log_values
+
+    for label in similar_params:
+        label_values = original_df.loc[:, label].to_numpy()
+        log_values = np.log(label_values)
+        dic_x[label] = log_values
+
+    for label in non_dimensional_qoi:
+        label_values = original_df.loc[:, label].to_numpy()
+        log_values = np.log(label_values)
+        dic_y[label] = log_values
+
+    df_log_x = pd.DataFrame.from_dict(dic_x)
+    df_log_y = pd.DataFrame.from_dict(dic_y)
+
+    return (df_log_x, df_log_y)
