@@ -59,7 +59,7 @@ def adjust_dataframe_according_to_similarity(
         data_path: str,
         non_similar_params: List[str],
         similar_params: List[str],
-        non_dimensional_qoi: List[str]) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        non_dimensional_qoi: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
 
     Makes the appropriate ordering of the Dataframe collumns so that it follows
@@ -84,10 +84,9 @@ def adjust_dataframe_according_to_similarity(
         log_values = np.log(label_values)
         dic_x[label] = log_values
 
-    for label in non_dimensional_qoi:
-        label_values = original_df.loc[:, label].to_numpy()
-        log_values = np.log(label_values)
-        dic_y[label] = log_values
+    nd_qoi_label_values = original_df.loc[:, non_dimensional_qoi].to_numpy()
+    nd_qoi_log_values = np.log(nd_qoi_label_values)
+    dic_y[non_dimensional_qoi] = nd_qoi_log_values
 
     df_log_x = pd.DataFrame.from_dict(dic_x)
     df_log_y = pd.DataFrame.from_dict(dic_y)

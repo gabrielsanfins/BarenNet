@@ -1,8 +1,7 @@
 from typing import List, Dict
 import numpy as np
 
-from .group_calculations import (
-    find_buckingham_group_exponents_from_construction_dict)
+from .group_calculations import (find_buckingham_group_exponents_matrix)
 
 from .barennet import create_barennet
 
@@ -15,8 +14,9 @@ class SimilarityModel:
                  data_path: str,
                  dimensionally_independent_params: List[str],
                  dimensionally_dependent_params: List[str],
-                 dimensional_qoi: List[str],
-                 non_dimensional_qoi: List[str],
+                 dimensional_qoi: str,
+                 non_dimensional_params: List[str],
+                 non_dimensional_qoi: str,
                  non_dimensional_params_construction:
                  Dict[str, Dict[str, float]],
                  non_dimesional_qoi_construction: Dict[str, Dict[str, float]],
@@ -56,6 +56,7 @@ class SimilarityModel:
                                             dimensionally_independent_params)
         self.dimensionally_dependent_params = dimensionally_dependent_params
         self.dimensional_qoi = dimensional_qoi
+        self.non_dimensional_params = non_dimensional_params
         self.non_dimensional_qoi = non_dimensional_qoi
         self.non_dimensional_params_construction = (
                                            non_dimensional_params_construction)
@@ -64,7 +65,37 @@ class SimilarityModel:
         self.similar_params = similar_params
         self.found_incomplete_similarity = False
 
+        self.A_matrix, self.B_matrix = self._create_exponents_matrices()
+        self.Delta_matrix = find_buckingham_group_exponents_matrix(
+            self.A_matrix, self.B_matrix)
+
         self._create_buckingham_similarity_group()
+
+    def _create_exponents_matrices(self):
+        """
+
+        Function that the creates the exponents matrices according to the MDDP
+        construction theory (see README.md).
+
+        """
+        m = len(self.dimensionally_independent_params)
+        l = len(self.dimensionally_dependent_params)
+
+        A_matrix = np.zeros(shape=(l, m))
+        B_matrix = np.zeros(shape=(l, l))
+
+        for i in range(l):
+            for j in range(m):
+                A_matrix[i, j] = - self.non_dimensional_params_construction[
+                    self.non_dimensional_params[i]][
+                        self.dimensionally_independent_params[j]]
+
+            for j in range(l):
+                B_matrix[i, j] = self.non_dimensional_params_construction[
+                    self.non_dimensional_params[i]][
+                        self.dimensionally_dependent_params[j]]
+
+        return A_matrix, B_matrix
 
     def _create_buckingham_similarity_group(self) -> None:
         """
@@ -74,39 +105,69 @@ class SimilarityModel:
         created. This method should run every time an instance of the class is
         created in the method __init__.
 
+        # WRONG! SHOULD BE ADAPTED TO THE NEW THEORY OF MDDP construction.
+
         """
-        similarity_dic = {}
-        for nd_key in self.non_dimensional_params_construction.keys():
-            dimensional_dict = self.non_dimensional_params_construction[nd_key]
-            independent_parameters = self.dimensionally_independent_params
-            dependent_parameters = self.dimensionally_dependent_params
+        similarity_dict = self._initialize_buckingham_similarity_dict()
 
-            dimensionally_dependent_key, exponents_dict = (
-                find_buckingham_group_exponents_from_construction_dict(
-                    dimensional_dict=dimensional_dict,
-                    dimensionally_independent_params=independent_parameters,
-                    dimensionally_dependent_params=dependent_parameters
-                )
+        for j in range(len(self.dimensionally_dependent_params)):
+            exponents_dict = {}
+            for i in range(len(self.dimensionally_independent_params)):
+                exponents_dict["A_" + str(i+1)] = self.Delta_matrix[j, i]
+
+            similarity_dict[self.dimensionally_dependent_params[j]] = (
+                exponents_dict
             )
 
-            similarity_dic[dimensionally_dependent_key] = exponents_dict
+        nd_qoi_exponents_dict = {}
+        denominator = self.non_dimensional_qoi_construction[
+            self.non_dimensional_qoi][self.dimensional_qoi]
 
-        for nd_key in self.non_dimensional_qoi_construction.keys():
-            dimensional_dict = self.non_dimensional_qoi_construction[nd_key]
-            independent_parameters = self.dimensionally_independent_params
-            dependent_parameters = self.dimensional_qoi
+        for i in range(len(self.dimensionally_independent_params)):
+            alpha = self.non_dimensional_qoi_construction[
+                self.non_dimensional_qoi][
+                    self.dimensionally_independent_params[i]]
 
-            dimensionally_dependent_key, exponents_dict = (
-                find_buckingham_group_exponents_from_construction_dict(
-                    dimensional_dict=dimensional_dict,
-                    dimensionally_independent_params=independent_parameters,
-                    dimensionally_dependent_params=dependent_parameters
-                )
+            exponents_sum = 0
+
+            for j in range(len(self.dimensionally_dependent_params)):
+                exponents_sum += (self.Delta_matrix[j, i] *
+                                  self.non_dimensional_qoi_construction[
+                                      self.non_dimensional_qoi][
+                                          self.dimensionally_dependent_params[j]
+                                      ])
+
+            numerator = alpha + exponents_sum
+            exponent = numerator / denominator
+            nd_qoi_exponents_dict["A_" + str(i + 1)] = exponent
+
+        similarity_dict[self.dimensional_qoi] = nd_qoi_exponents_dict
+
+        self.buckingham_similarity_group = similarity_dict
+
+    def _initialize_buckingham_similarity_dict(
+            self) -> Dict[str, Dict[str, float]]:
+        """
+
+        Initializes a dicitionary for the construction of the Buckinham
+        similarity group. Only adds the construction of the exponents for the
+        dimensionally independent parameters.
+
+        """
+        similarity_dict = {}
+
+        for n in range(len(self.dimensionally_independent_params)):
+            param_dict = {}
+            for m in range(len(self.dimensionally_independent_params)):
+                if m == n:
+                    param_dict["A_" + str(m + 1)] = 1.0
+                else:
+                    param_dict["A_" + str(m + 1)] = 0.0
+
+            similarity_dict[self.dimensionally_independent_params[n]] = (
+                param_dict
             )
-
-            similarity_dic[dimensionally_dependent_key] = exponents_dict
-
-        self.buckingham_similarity_group = similarity_dic
+        return similarity_dict
 
     def print_buckingham_similarity_group(self) -> None:
         """
@@ -119,66 +180,16 @@ class SimilarityModel:
             raise ValueError("There is no Buckingham similarity group to "
                              "print.")
 
-        # First we will build a dictionary which will make a correspodence
-        # between the dimensionally independent parameters and their respective
-        # group parameters.
+        for gov_parameter in self.buckingham_similarity_group.keys():
+            param_str = gov_parameter + "* = "
+            sim_dict = self.buckingham_similarity_group
 
-        group_params_dict = {}
-        di_params = self.dimensionally_independent_params
-        for n in range(len(di_params)):
-            group_params_dict[di_params[n]] = "A_" + str(n + 1)
+            for group_parameter in sim_dict[gov_parameter].keys():
+                param_str += (group_parameter + "^" +
+                              str(sim_dict[gov_parameter][group_parameter]) +
+                              " ")
 
-        # Print the group transformations for the dimensionally independent
-        # parameters.
-
-        for key in group_params_dict.keys():
-            print(key + "* = " + group_params_dict[key] + " " + key)
-
-        # Print the group transformations for the dimensionally dependent
-        # parameters.
-
-        dd_params = self.dimensionally_dependent_params
-
-        for key in dd_params:
-            group_str = self._generate_buckingham_group_str(
-                key=key,
-                group_params_dict=group_params_dict
-            )
-
-            print(key + "* = " + group_str + key)
-
-        # Print the group transformations for the qoi.
-
-        qoi = self.dimensional_qoi
-
-        for key in qoi:
-            group_str = self._generate_buckingham_group_str(
-                key=key,
-                group_params_dict=group_params_dict
-            )
-
-            print(key + "* = " + group_str + key)
-
-    def _generate_buckingham_group_str(self,
-                                       key: str,
-                                       group_params_dict: Dict[str, str]
-                                       ) -> str:
-        """
-
-        Generates a string to help the generation of the buckingham similarity
-        group print.
-
-        """
-        group_str = ""
-
-        for di_key in self.buckingham_similarity_group[key]:
-            exponent = round(self.buckingham_similarity_group[key][di_key],
-                             2)
-            exponent_str = str(exponent)
-            group_str += (group_params_dict[di_key] + "^{" + exponent_str +
-                          "} ")
-
-        return group_str
+            print(param_str + gov_parameter)
 
     def find_incomplete_similarity(self,
                                    dense_activation: str = "relu",
@@ -270,7 +281,7 @@ class SimilarityModel:
                         'similarity_layer').weights[0][j][i].numpy()
                     )
 
-        for i in range(len(self.non_dimensional_qoi)):
+        for i in range(len([self.non_dimensional_qoi])):
             exponents_dict[self.non_dimensional_qoi[i]] = {}
             for j in range(len(self.similar_params)):
                 exponents_dict[self.non_dimensional_qoi[i]][
