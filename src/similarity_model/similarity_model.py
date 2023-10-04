@@ -105,8 +105,6 @@ class SimilarityModel:
         created. This method should run every time an instance of the class is
         created in the method __init__.
 
-        # WRONG! SHOULD BE ADAPTED TO THE NEW THEORY OF MDDP construction.
-
         """
         similarity_dict = self._initialize_buckingham_similarity_dict()
 
