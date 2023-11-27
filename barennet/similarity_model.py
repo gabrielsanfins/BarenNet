@@ -229,10 +229,10 @@ class SimilarityModel:
 
             if current_loss < tol:
                 print("Incomplete Similarity Found!")
-                print("Error = " + current_loss)
+                print("Error = " + str(current_loss))
                 self.barennet_model = model
-                self._save_incomplete_similarity_relation()
                 self.found_incomplete_similarity = True
+                self._save_incomplete_similarity_relation()
                 return None
 
             n += 1
@@ -277,15 +277,14 @@ class SimilarityModel:
                         'similarity_layer').weights[0][j][i].numpy()
                     )
 
-        for i in range(len([self.non_dimensional_qoi])):
-            exponents_dict[self.non_dimensional_qoi[i]] = {}
-            for j in range(len(self.similar_params)):
-                exponents_dict[self.non_dimensional_qoi[i]][
-                    self.similar_params[j]
-                ] = (
-                    self.barennet_model.get_layer(
-                        'multiplication_layer').weights[0][j][i].numpy()
-                    )
+        exponents_dict[self.non_dimensional_qoi] = {}
+        for j in range(len(self.similar_params)):
+            exponents_dict[self.non_dimensional_qoi][
+                self.similar_params[j]
+            ] = (
+                self.barennet_model.get_layer(
+                    'multiplication_layer').weights[0][j][0].numpy()
+                )
 
         self.incomplete_similarity_exponents_dict = exponents_dict
 
