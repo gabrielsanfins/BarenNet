@@ -134,7 +134,7 @@ class SimilarityModel:
                                       ])
 
             numerator = alpha + exponents_sum
-            exponent = numerator / denominator
+            exponent = - (numerator / denominator)
             nd_qoi_exponents_dict["A_" + str(i + 1)] = exponent
 
         similarity_dict[self.dimensional_qoi] = nd_qoi_exponents_dict
@@ -213,7 +213,7 @@ class SimilarityModel:
         best_loss = 1000000
 
         n = 1
-        while n < n_tries:
+        while n <= n_tries:
             model = create_barennet(
                 n_nonsimilar=self.n_nonsimilar,
                 n_similar=self.n_similar,
