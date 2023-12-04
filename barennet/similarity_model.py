@@ -1,7 +1,8 @@
 from typing import List, Dict
 import numpy as np
 
-from .group_calculations import (find_buckingham_group_exponents_matrix)
+from .group_calculations import (find_buckingham_group_exponents_matrix,
+                                 find_renormalization_group_exponents_matrix)
 from .barennet import create_barennet
 from .utils import adjust_dataframe_according_to_similarity
 
@@ -251,7 +252,7 @@ class SimilarityModel:
         """
 
         Saves the incomplete similarity relation found through barennet. In
-        order for this method to work, an incomplete similarity relation should
+        order for this method to work, an incomplete similarity relation must
         have been found with the method find_incomplete_similarity.
 
         The exponents of the incomplete similarity relation will be saved in
@@ -289,3 +290,55 @@ class SimilarityModel:
         self.incomplete_similarity_exponents_dict = exponents_dict
 
         return None
+
+    def _create_incomplete_similarity_exponents_matrix(self) -> None:
+        """
+
+        Creates a matrix which we call Xi. This matrix will contain all the
+        exponents found for the incomplete similarity relation.
+
+        """
+        if not self.found_incomplete_similarity:
+            print("Incomplete similarity was not found. In order for an "
+                  "incomplete similarity relation to exist, we first need "
+                  "to sucessfully find it with the method "
+                  "find_incomplete_similarity.")
+            return None
+
+        l = len(self.dimensionally_dependent_params)
+        n = len(self.non_similar_params)
+
+        Xi_matrix = np.zeros(shape=(n, l-n))
+
+        for i in range(n):
+            for j in range(l-n):
+                Xi_matrix[i, j] = self.incomplete_similarity_exponents_dict[
+                    self.non_similar_params[i]][self.similar_params[j]]
+
+        self.Xi_matrix = Xi_matrix
+
+        return None
+
+    def _create_renormalization_group(self) -> None:
+        """
+
+        Creates the renormalization group and stores it into a dictionary. It
+        then saves this dictionary in an attribute of the class.
+
+        """
+
+        if not self.found_incomplete_similarity:
+            print("Incomplete similarity was not found. In order for an "
+                  "incomplete similarity relation to exist, we first need "
+                  "to sucessfully find it with the method "
+                  "find_incomplete_similarity.")
+            return None
+
+        l = len(self.dimensionally_dependent_params)
+        n = len(self.non_similar_params)
+
+        self.Mu_Matrix = find_renormalization_group_exponents_matrix(
+            Xi_matrix=self.Xi_matrix,
+            B_matrix=self.B_matrix,
+            n=n, l=l
+        )
