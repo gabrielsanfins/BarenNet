@@ -8,7 +8,8 @@ setup(
         'numpy>=1.21.4',
         'pandas>=1.3.4',
         'tensorflow>=2.14.0',
-        'tensorflow_cpu>=2.9.1'
+        'tensorflow_cpu>=2.9.1',
+        'openpyxl'
     ],
     author="Gabriel Sanfins",
     author_email="gabrielsanfins@gmail.com",
