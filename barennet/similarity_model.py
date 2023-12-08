@@ -239,6 +239,7 @@ class SimilarityModel:
                 self.barennet_model = model
                 self.found_incomplete_similarity = True
                 self._save_incomplete_similarity_relation()
+                self._create_renormalization_group()
                 return None
 
             n += 1
