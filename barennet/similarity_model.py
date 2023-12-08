@@ -365,6 +365,9 @@ class SimilarityModel:
                   "find_incomplete_similarity.")
             return None
 
+        renormalization_dict = self._initialize_renormalization_group_dict()
+        self._create_incomplete_similarity_exponents_matrix()
+
         l = len(self.dimensionally_dependent_params)
         n = len(self.non_similar_params)
 
@@ -373,3 +376,63 @@ class SimilarityModel:
             B_matrix=self.B_matrix,
             n=n, l=l
         )
+        for i in range(n):
+            exponents_dict = {}
+            for j in range(l - n):
+                exponents_dict["B_" + str(n + j + 1)] = self.Mu_Matrix[i, j]
+
+            renormalization_dict[
+                self.dimensionally_dependent_params[i]
+                ] = exponents_dict
+
+        # Now we will work on the qoi renormalization exponents
+
+        qoi_renormalization_dict = {}
+
+        for j in range(l - n):
+
+            numerator = 0
+            denominator = self.non_dimensional_qoi_construction[
+                self.non_dimensional_qoi][self.dimensional_qoi]
+
+            beta_vector = np.zeros(shape=(l))
+
+            for i in range(l):
+                beta_vector[i] = self.non_dimensional_qoi_construction[
+                    self.non_dimensional_qoi][
+                        self.dimensionally_dependent_params[i]
+                ]
+
+            numerator += np.dot(beta_vector[0:n], self.Mu_Matrix[:, j])
+
+            beta_k_sum = np.zeros(shape=(n))
+            xi_vector = np.zeros(shape=(l-n))
+
+            for k in range(l-n):
+                xi_vector[k] = self.incomplete_similarity_exponents_dict[
+                    self.non_dimensional_qoi][self.similar_params[k]]
+
+            for k in range(l-n):
+                beta_k_sum += xi_vector[k] * self.B_matrix[n+k, 0:n]
+
+            numerator += np.dot(beta_k_sum, self.Mu_Matrix[:, j])
+
+            numerator += beta_vector[n+j]
+
+            beta_j_k_sum = 0
+
+            for k in range(l-n):
+                beta_j_k_sum += xi_vector[k] * self.B_matrix[n+k, n+j]
+
+            numerator += beta_j_k_sum
+
+            qoi_renormalization_dict["B_" + str(n+j+1)] = - (
+                numerator / denominator
+            )
+
+        renormalization_dict[self.dimensional_qoi] = qoi_renormalization_dict
+
+        self.renormalization_dict = renormalization_dict
+
+        return None
+
