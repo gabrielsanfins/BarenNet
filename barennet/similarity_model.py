@@ -324,6 +324,32 @@ class SimilarityModel:
 
         return None
 
+    def _initialize_renormalization_group_dict(
+            self) -> Dict[str, Dict[str, float]]:
+        """
+
+        Initializes a dicitionary for the construction of the Renormalization
+        group. Only adds the construction of the exponents for the similar
+        parameters.
+
+        """
+
+        n = len(self.non_similar_params)
+        similarity_dict = {}
+
+        for i in range(len(self.similar_params)):
+            param_dict = {}
+            for j in range(len(self.similar_params)):
+                if i == j:
+                    param_dict["B_" + str(n + j + 1)] = 1.0
+                else:
+                    param_dict["B_" + str(n + j + 1)] = 0.0
+
+            similarity_dict[self.dimensionally_dependent_params[n + i]] = (
+                param_dict
+            )
+        return similarity_dict
+
     def _create_renormalization_group(self) -> None:
         """
 
