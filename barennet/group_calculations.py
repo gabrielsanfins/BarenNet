@@ -33,16 +33,11 @@ def find_renormalization_group_exponents_matrix(
 
     for i in range(n):
         beta_n_vector = B_matrix[i, :n]
-        print(beta_n_vector)
         vector_sum = np.zeros(shape=(1, n))
         for j in range(l-n):
             vector_sum += Xi_matrix[i, j] * B_matrix[n+j, :n]
 
-        print(vector_sum)
-
         A_renorm_matrix[i, :] = beta_n_vector + vector_sum
-
-    print(A_renorm_matrix)
 
     for i in range(n):
         for j in range(l-n):
@@ -53,8 +48,6 @@ def find_renormalization_group_exponents_matrix(
                 beta_sum += Xi_matrix[i, k] * B_matrix[n+k, n+j]
 
             B_renorm_matrix[i, j] = - (beta + beta_sum)
-
-    print(B_renorm_matrix)
 
     Mu_matrix = np.linalg.solve(A_renorm_matrix, B_renorm_matrix)
 
