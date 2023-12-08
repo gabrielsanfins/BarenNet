@@ -436,3 +436,30 @@ class SimilarityModel:
 
         return None
 
+    def print_renormalization_group(self):
+        """
+
+        Prints the Renormalization Group induced by the relation of incomplete
+        similarity found by the method find_incomplete_similarity.
+
+        """
+
+        if not self.found_incomplete_similarity:
+            raise ValueError("There is no relation of incomplete similarity "
+                             "found. Therefore, it is impossible to create a "
+                             "renormalization group.")
+
+        for gov_parameter in self.dimensionally_independent_params:
+            param_str = gov_parameter + "* = " + gov_parameter
+            print(param_str)
+
+        for gov_parameter in self.renormalization_dict.keys():
+            param_str = gov_parameter + "* = "
+            sim_dict = self.renormalization_dict
+
+            for group_parameter in sim_dict[gov_parameter].keys():
+                param_str += (group_parameter + "^" +
+                              str(sim_dict[gov_parameter][group_parameter]) +
+                              " ")
+
+            print(param_str + gov_parameter)
