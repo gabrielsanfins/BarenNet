@@ -37,6 +37,11 @@ class SimilarityModel:
                              "parameters should be equal to the lenght of the "
                              "dimensionally dependent parameters list.")
 
+        if non_similar_params + similar_params != non_dimensional_params:
+            raise ValueError(
+                "The operation non_similar_params + similar_params must be "
+                "equal to non_dimensional_params, please rearrange them.")
+
         self.data_path = data_path
 
         if data_path == "":
