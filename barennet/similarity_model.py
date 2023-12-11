@@ -288,7 +288,7 @@ class SimilarityModel:
         for j in range(len(self.similar_params)):
             exponents_dict[self.non_dimensional_qoi][
                 self.similar_params[j]
-            ] = (
+            ] = - (
                 self.barennet_model.get_layer(
                     'multiplication_layer').weights[0][j][0].numpy()
                 )
