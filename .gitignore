@@ -1,4 +1,7 @@
 *.txt
 *.pdf
 *.xlsx
+!Data/*.xlsx
+!Data/McKeon_original_data/*.txt
+Data/*.ipynb
 Nikuradse.ipynb
