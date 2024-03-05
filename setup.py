@@ -9,7 +9,9 @@ setup(
         'pandas>=1.3.4',
         'tensorflow>=2.14.0',
         'tensorflow_cpu>=2.9.1',
-        'openpyxl'
+        'openpyxl',
+        'matplotlib',
+        'seaborn'
     ],
     author="Gabriel Sanfins",
     author_email="gabrielsanfins@gmail.com",
