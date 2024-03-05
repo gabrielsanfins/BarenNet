@@ -9,6 +9,7 @@ setup(
         'pandas>=1.3.4',
         'tensorflow>=2.14.0',
         'tensorflow_cpu>=2.9.1',
+        'sympy',
         'openpyxl',
         'matplotlib',
         'seaborn'
