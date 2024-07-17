@@ -2,12 +2,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as font_manager
-import matplotlib.ticker as mtick
 from matplotlib import cm  # Colormaps
-import matplotlib.gridspec as gridspec
-from mpl_toolkits import mplot3d
-import seaborn as sns
-from sympy import symbols, sqrt
+import seaborn as sns # noqa
+from sympy import sqrt
 
 from tutorial_utils.physical_methods import laminar_flow_wall_coordinates
 
@@ -114,7 +111,8 @@ def plot_laminar_flow_renormalized(U_plus, Y_plus, Re_tau, exponents_dict):
 
     ax1.legend(bbox_to_anchor=(0., 0.99), loc='upper left', edgecolor='white',
                framealpha=0, prop=font, borderaxespad=0.)
-    ax1.set_xlabel(r"$y^+ \times Re_\tau^{\xi_2^{(1)}}$", size='xx-large', fontweight='black')
+    ax1.set_xlabel(r"$y^+ \times Re_\tau^{\xi_2^{(1)}}$", size='xx-large',
+                   fontweight='black')
     ax1.set_ylabel(r'$u^+ \times Re_\tau^{\xi_1}$', size='xx-large')
     # ax1.set_ylim([5,14])
     ax1.grid(False)
@@ -146,13 +144,27 @@ def plot_laminar_flow_renormalized(U_plus, Y_plus, Re_tau, exponents_dict):
 
 def _get_extreme_re_data_for_plotting():
 
-    dfSB2M300k_M = pd.read_csv("../Data/McKeon_original_data/Re2300000.txt",  sep="\t", header=None, names = ["datapoint", "y/R", "y+", "U+", "(U+-Ucl+)"])
-    dfSB3M_M = pd.read_csv("../Data/McKeon_original_data/Re3000000.txt", sep="\t", header=None, names = ["datapoint", "y/R", "y+", "U+", "(U+-Ucl+)"])
-    dfSB4M_M = pd.read_csv("../Data/McKeon_original_data/Re4000000.txt", sep="\t", header=None, names = ["datapoint", "y/R", "y+", "U+", "(U+-Ucl+)"])
-    dfSB6M_M = pd.read_csv("../Data/McKeon_original_data/Re6000000.txt", sep="\t", header=None, names = ["datapoint", "y/R", "y+", "U+", "(U+-Ucl+)"])
-    dfSB7M_M = pd.read_csv("../Data/McKeon_original_data/Re7000000.txt", sep="\t", header=None, names = ["datapoint", "y/R", "y+", "U+", "(U+-Ucl+)"])
-    dfSB10M_M = pd.read_csv("../Data/McKeon_original_data/Re10000000.txt", sep="\t", header=None, names = ["datapoint", "y/R", "y+", "U+", "(U+-Ucl+)"])
-    dfSB13M_M = pd.read_csv("../Data/McKeon_original_data/Re13000000.txt", sep="\t", header=None, names = ["datapoint", "y/R", "y+", "U+", "(U+-Ucl+)"])
+    dfSB2M300k_M = pd.read_csv(
+        "../Data/McKeon_original_data/Re2300000.txt", sep="\t", header=None,
+        names=["datapoint", "y/R", "y+", "U+", "(U+-Ucl+)"])
+    dfSB3M_M = pd.read_csv(
+        "../Data/McKeon_original_data/Re3000000.txt", sep="\t", header=None,
+        names=["datapoint", "y/R", "y+", "U+", "(U+-Ucl+)"])
+    dfSB4M_M = pd.read_csv(
+        "../Data/McKeon_original_data/Re4000000.txt", sep="\t", header=None,
+        names=["datapoint", "y/R", "y+", "U+", "(U+-Ucl+)"])
+    dfSB6M_M = pd.read_csv(
+        "../Data/McKeon_original_data/Re6000000.txt", sep="\t", header=None,
+        names=["datapoint", "y/R", "y+", "U+", "(U+-Ucl+)"])
+    dfSB7M_M = pd.read_csv(
+        "../Data/McKeon_original_data/Re7000000.txt", sep="\t", header=None,
+        names=["datapoint", "y/R", "y+", "U+", "(U+-Ucl+)"])
+    dfSB10M_M = pd.read_csv(
+        "../Data/McKeon_original_data/Re10000000.txt", sep="\t", header=None,
+        names=["datapoint", "y/R", "y+", "U+", "(U+-Ucl+)"])
+    dfSB13M_M = pd.read_csv(
+        "../Data/McKeon_original_data/Re13000000.txt", sep="\t", header=None,
+        names=["datapoint", "y/R", "y+", "U+", "(U+-Ucl+)"])
 
     dfs = [dfSB2M300k_M, dfSB3M_M, dfSB4M_M, dfSB6M_M,
            dfSB7M_M, dfSB10M_M, dfSB13M_M]
@@ -231,7 +243,7 @@ def plot_extreme_re_flow_renormalized(exponents_dict):
 
     fig, ax1 = plt.subplots(figsize=(16, 10))
 
-    left, bottom, width, height = [0.57, 0.17, 0.3, 0.3] 
+    left, bottom, width, height = [0.57, 0.17, 0.3, 0.3]
     ax2 = fig.add_axes([left, bottom, width, height])
 
     colors = cm.tab10(np.linspace(0, 1, 10))
@@ -283,8 +295,9 @@ def plot_extreme_re_flow_renormalized(exponents_dict):
     # ax2.set_ylim([5,14])
     ax2.grid(False)
 
-    plt.savefig('tutorial_plots/extreme_re_flow_wall_coordinates_renormalized.pdf',
-                format='pdf', dpi=1200)
+    plt.savefig(
+        'tutorial_plots/extreme_re_flow_wall_coordinates_renormalized.pdf',
+        format='pdf', dpi=1200)
 
     plt.show()
 
@@ -349,8 +362,8 @@ def plot_widom_scaling():
                                        style='normal', size='large',
                                        stretch='ultra-condensed')
 
-    ax1.legend(bbox_to_anchor=(0.90, 0.99), loc='upper left', edgecolor='white',
-               framealpha=0, prop=font, borderaxespad=0.)
+    ax1.legend(bbox_to_anchor=(0.90, 0.99), loc='upper left',
+               edgecolor='white', framealpha=0, prop=font, borderaxespad=0.)
     ax1.set_xlabel(r"$r$", size='xx-large', fontweight='black')
     ax1.set_ylabel(r'$\phi$', size='xx-large')
     # ax1.set_ylim([5,14])
@@ -384,8 +397,8 @@ def plot_widom_scaling_renormalized(exponents_dict):
                                        style='normal', size='large',
                                        stretch='ultra-condensed')
 
-    ax1.legend(bbox_to_anchor=(0.90, 0.99), loc='upper left', edgecolor='white',
-               framealpha=0, prop=font, borderaxespad=0.)
+    ax1.legend(bbox_to_anchor=(0.90, 0.99), loc='upper left',
+               edgecolor='white', framealpha=0, prop=font, borderaxespad=0.)
     ax1.set_xlabel(r"$r / j^{2/3}$", size='xx-large', fontweight='black')
     ax1.set_ylabel(r'$\phi / j^{1/3}$', size='xx-large')
     # ax1.set_ylim([5,14])
@@ -505,4 +518,334 @@ def plot_laminar_bingham_renormalized(exponents_dict):
 
     plt.savefig('tutorial_plots/laminar_bingham_flow_renormalized.pdf',
                 format='pdf', dpi=1200)
+    plt.show()
+
+
+def _get_nikuradse_data_for_plotting():
+
+    nikuradse_df = pd.read_excel(
+        "../Data/Nikuradse_original_data/Nikuradse.xlsx"
+    )
+
+    re_key_list = ["Re_15", "Re_30_6", "Re_60", "Re_126", "Re_252", "Re_507",
+                   "Re_1300"]
+    friction_key_list = ["100lambda_15", "100lambda_30_6", "100lambda_60",
+                         "100lambda_126", "100lambda_252", "100lambda_507",
+                         "100lambda_1300"]
+    D_r_list = [15, 30.6, 60, 126, 252, 507, 1300]
+
+    length_list = [76, 74, 77, 67, 43, 38, 39]
+    r_hat_list = []
+
+    for d_r in D_r_list:
+        r_hat_list.append(1 / d_r)
+
+    Re_ = []
+    R_hat_ = []
+    f_ = []
+
+    for i in range(7):
+        Re = list(nikuradse_df[re_key_list[i]].values)
+        f = list(nikuradse_df[friction_key_list[i]].values)
+        R_hat = r_hat_list[i]
+
+        Re_.append(Re[:length_list[i]])
+        f_.append(f[:length_list[i]])
+        R_hat_.append(R_hat)
+
+    return Re_, R_hat_, f_
+
+
+def plot_nikuradse_data():
+
+    Re, R_hat, f = _get_nikuradse_data_for_plotting()
+
+    fig, ax1 = plt.subplots(figsize=(16, 10))
+
+    left, bottom, width, height = [0.57, 0.55, 0.3, 0.3]
+    ax2 = fig.add_axes([left, bottom, width, height])
+
+    j = 0
+    for r_hat in R_hat:
+        ax1.scatter(Re[j], f[j], alpha=1, s=40, linewidth=line_width,
+                    facecolors='none', color=colors[j], marker=markers[j],
+                    label=r'$D/r = $'+r'${:.1f}$'.format(1 / r_hat))
+
+        ax2.scatter(Re[j], f[j], alpha=1, s=40, linewidth=line_width,
+                    facecolors='none', color=colors[j], marker=markers[j])
+
+        j += 1
+
+    font = font_manager.FontProperties(family='DejaVu Sans', weight='roman',
+                                       style='normal', size='large',
+                                       stretch='ultra-condensed')
+
+    ax1.legend(bbox_to_anchor=(0.3, 0.99), loc='upper left', edgecolor='white',
+               framealpha=0, prop=font, borderaxespad=0.)
+    ax1.set_xlabel(r"$Re$", size='xx-large', fontweight='black')
+    ax1.set_ylabel(r'$f$', size='xx-large')
+    # ax1.set_ylim([5,14])
+    ax1.grid(False)
+    ax1.tick_params(axis='x', labelsize='large')
+    ax1.tick_params(axis='y', labelsize='large')
+    ax1.spines['bottom'].set_color('black')
+    ax1.spines['top'].set_color('black')
+    ax1.spines['left'].set_color('black')
+    ax1.spines['right'].set_color('black')
+    ax2.spines['bottom'].set_color('black')
+    ax2.spines['top'].set_color('black')
+    ax2.spines['left'].set_color('black')
+    ax2.spines['right'].set_color('black')
+    ax2.set_xlabel(r"$\log \ Re $", fontsize='large')
+    ax2.set_ylabel(r'$\log \ f$', fontsize='large')
+    ax2.set_xscale('log')
+    ax2.set_yscale('log')
+    ax2.tick_params(axis='x', labelsize='medium')
+    ax2.tick_params(axis='y', labelsize='medium')
+    # ax2.set_xlim([0.01,1])
+    # ax2.set_ylim([5,14])
+    ax2.grid(False)
+
+    plt.savefig('tutorial_plots/nikuradse_data.pdf',
+                format='pdf', dpi=1200)
+    plt.show()
+
+
+def plot_nikuradse_data_renormalized():
+
+    Re, R_hat, f = _get_nikuradse_data_for_plotting()
+
+    fig, ax1 = plt.subplots(figsize=(16, 10))
+
+    left, bottom, width, height = [0.57, 0.17, 0.3, 0.3]
+    ax2 = fig.add_axes([left, bottom, width, height])
+
+    j = 0
+    for r_hat in R_hat:
+        re = np.array(Re[j])
+        ff = np.array(f[j])
+
+        ax1.scatter((re**(0.7815293)) * r_hat, ff * (re**(0.22047572)),
+                    alpha=1, s=40, linewidth=line_width, facecolors='none',
+                    color=colors[j], marker=markers[j],
+                    label=r'$D/r = $'+r'${:.1f}$'.format(1 / r_hat))
+
+        ax2.scatter((re**(0.7815293)) * r_hat, ff * (re**(0.22047572)),
+                    alpha=1, s=40, linewidth=line_width, facecolors='none',
+                    color=colors[j], marker=markers[j])
+
+        j += 1
+
+    font = font_manager.FontProperties(family='DejaVu Sans', weight='roman',
+                                       style='normal', size='large',
+                                       stretch='ultra-condensed')
+
+    ax1.legend(bbox_to_anchor=(0., 0.99), loc='upper left', edgecolor='white',
+               framealpha=0, prop=font, borderaxespad=0.)
+    ax1.set_xlabel(r"$Re^{0.78} \ \left( r / D \right)$", size='xx-large',
+                   fontweight='black')
+    ax1.set_ylabel(r'$Re^{0.22} \ f$', size='xx-large')
+    # ax1.set_ylim([5,14])
+    ax1.grid(False)
+    ax1.tick_params(axis='x', labelsize='large')
+    ax1.tick_params(axis='y', labelsize='large')
+    ax1.spines['bottom'].set_color('black')
+    ax1.spines['top'].set_color('black')
+    ax1.spines['left'].set_color('black')
+    ax1.spines['right'].set_color('black')
+    ax2.spines['bottom'].set_color('black')
+    ax2.spines['top'].set_color('black')
+    ax2.spines['left'].set_color('black')
+    ax2.spines['right'].set_color('black')
+    ax2.set_xlabel(
+        r"$\log \ \left( Re^{0.78} \ \left( r / D \right) \right) $",
+        fontsize='large')
+    ax2.set_ylabel(r'$\log \ \left( Re^{0.22} \ f \right)$', fontsize='large')
+    ax2.set_xscale('log')
+    ax2.set_yscale('log')
+    ax2.tick_params(axis='x', labelsize='medium')
+    ax2.tick_params(axis='y', labelsize='medium')
+    # ax2.set_xlim([0.01,1])
+    # ax2.set_ylim([5,14])
+    ax2.grid(False)
+
+    plt.savefig('tutorial_plots/nikuradse_data_renormalized.pdf',
+                format='pdf', dpi=1200)
+    plt.show()
+
+
+def plot_nikuradse_data_goldenfeld_exponents():
+
+    Re, R_hat, f = _get_nikuradse_data_for_plotting()
+
+    fig, ax1 = plt.subplots(figsize=(16, 10))
+
+    left, bottom, width, height = [0.57, 0.17, 0.3, 0.3]
+    ax2 = fig.add_axes([left, bottom, width, height])
+
+    j = 0
+    for r_hat in R_hat:
+        re = np.array(Re[j])
+        ff = np.array(f[j])
+
+        ax1.scatter((re**(3/4)) * r_hat, ff * (re**(1/4)),
+                    alpha=1, s=40, linewidth=line_width, facecolors='none',
+                    color=colors[j], marker=markers[j],
+                    label=r'$D/r = $'+r'${:.1f}$'.format(1 / r_hat))
+
+        ax2.scatter((re**(3/4)) * r_hat, ff * (re**(1/4)),
+                    alpha=1, s=40, linewidth=line_width, facecolors='none',
+                    color=colors[j], marker=markers[j])
+
+        j += 1
+
+    font = font_manager.FontProperties(family='DejaVu Sans', weight='roman',
+                                       style='normal', size='large',
+                                       stretch='ultra-condensed')
+
+    ax1.legend(bbox_to_anchor=(0., 0.99), loc='upper left', edgecolor='white',
+               framealpha=0, prop=font, borderaxespad=0.)
+    ax1.set_xlabel(r"$Re^{3/4} \ \left( r / D \right)$", size='xx-large',
+                   fontweight='black')
+    ax1.set_ylabel(r'$Re^{1/4} \ f$', size='xx-large')
+    # ax1.set_ylim([5,14])
+    ax1.grid(False)
+    ax1.tick_params(axis='x', labelsize='large')
+    ax1.tick_params(axis='y', labelsize='large')
+    ax1.spines['bottom'].set_color('black')
+    ax1.spines['top'].set_color('black')
+    ax1.spines['left'].set_color('black')
+    ax1.spines['right'].set_color('black')
+    ax2.spines['bottom'].set_color('black')
+    ax2.spines['top'].set_color('black')
+    ax2.spines['left'].set_color('black')
+    ax2.spines['right'].set_color('black')
+    ax2.set_xlabel(r"$\log \ \left( Re^{3/4} \ \left( r / D \right) \right)$",
+                   fontsize='large')
+    ax2.set_ylabel(r'$\log \ \left( Re^{1/4} \ f \right)$', fontsize='large')
+    ax2.set_xscale('log')
+    ax2.set_yscale('log')
+    ax2.tick_params(axis='x', labelsize='medium')
+    ax2.tick_params(axis='y', labelsize='medium')
+    # ax2.set_xlim([0.01,1])
+    # ax2.set_ylim([5,14])
+    ax2.grid(False)
+
+    plt.savefig('tutorial_plots/nikuradse_data_goldenfeld_exponents.pdf',
+                format='pdf', dpi=1200)
+    plt.show()
+
+
+def plot_HB_data():
+
+    fig = plt.figure(figsize=(16, 10))
+    ax = fig.add_subplot(projection='3d')
+
+    possible_re_tau = np.linspace(start=100, stop=200, num=5)
+    possible_he = np.linspace(start=10, stop=100, num=10)
+    possible_n = [0.3, 0.5, 1.0]
+
+    i = 0
+    j = 0
+    for n in possible_n:
+        for re_tau in possible_re_tau:
+            U_ = []
+            R_ = []
+            He_ = []
+            for he in possible_he:
+                phi = he / (re_tau ** 2)
+                possible_r = np.linspace(start=phi, stop=1, num=20)
+                for r in possible_r:
+                    u_ = (re_tau / 4) * (
+                        (1 - phi)**((n+1)/n) - (r - phi)**((n+1)/n))
+                    if u_ > 0:
+                        U_.append(u_)
+                        R_.append(r)
+                        He_.append(he)
+
+            ax.scatter(R_, He_, U_, color=colors[i], marker=markers[j % 8],
+                       label=r'$Re_\tau= $'+r'${:.0f}$'.format(re_tau) + r', $n= $' + r'${:.1f}$'.format(n))
+            ax.grid(False)
+
+            j += 1
+        i += 1
+
+    font = font_manager.FontProperties(family='DejaVu Sans', weight='roman',
+                                       style='normal', size='x-large',
+                                       stretch='ultra-condensed')
+
+    ax.legend(bbox_to_anchor=(0.9, 0.8), loc='upper left', edgecolor='white',
+              framealpha=0, prop=font, borderaxespad=0.)
+    ax.spines['bottom'].set_color('black')
+    ax.spines['top'].set_color('black')
+    ax.spines['left'].set_color('black')
+    ax.spines['right'].set_color('black')
+    ax.set_xlabel(r"$r$", size='xx-large', labelpad=10)
+    ax.set_ylabel(r"$He$", size='xx-large', labelpad=20)
+    ax.zaxis.set_rotate_label(False)
+    ax.set_zlabel(r"$u^+$", size='xx-large', labelpad=20, rotation=0)
+    ax.view_init(elev=5, azim=80)
+
+    plt.savefig('tutorial_plots/laminar_HB_flow.pdf', format='pdf',
+                dpi=1200)
+    plt.show()
+
+
+def plot_HB_data_renormalized(exponents_dict):
+    fig = plt.figure(figsize=(16, 10))
+    ax = fig.add_subplot(projection='3d')
+
+    possible_re_tau = np.linspace(start=100, stop=200, num=5)
+    possible_he = np.linspace(start=10, stop=100, num=10)
+    possible_n = [0.3, 0.5, 1.0]
+
+    i = 0
+    j = 0
+    for n in possible_n:
+        r_exponent = exponents_dict["n=" + str(n)]["r^"]["Re_tau"]
+        he_exponent = exponents_dict["n=" + str(n)]["He"]["Re_tau"]
+        u_exponent = exponents_dict["n=" + str(n)]["u+"]["Re_tau"]
+        for re_tau in possible_re_tau:
+            U_ = []
+            R_ = []
+            He_ = []
+            for he in possible_he:
+                phi = he / (re_tau ** 2)
+                possible_r = np.linspace(start=phi, stop=1, num=20)
+                for r in possible_r:
+                    u_ = (re_tau / 4) * (
+                        (1 - phi)**((n+1)/n) - (r - phi)**((n+1)/n))
+                    if u_ > 0:
+                        U_.append(u_)
+                        R_.append(r)
+                        He_.append(he)
+
+            ax.scatter(np.array(R_) * (re_tau ** r_exponent),
+                       np.array(He_) * (re_tau ** he_exponent),
+                       np.array(U_) * (re_tau ** u_exponent), color=colors[i],
+                       marker=markers[j % 8],
+                       label=r'$Re_\tau= $'+r'${:.0f}$'.format(re_tau) + r', $n= $' + r'${:.1f}$'.format(n))
+            ax.grid(False)
+
+            j += 1
+        i += 1
+
+    font = font_manager.FontProperties(family='DejaVu Sans', weight='roman',
+                                       style='normal', size='x-large',
+                                       stretch='ultra-condensed')
+
+    ax.legend(bbox_to_anchor=(0.9, 0.8), loc='upper left', edgecolor='white',
+              framealpha=0, prop=font, borderaxespad=0.)
+    ax.spines['bottom'].set_color('black')
+    ax.spines['top'].set_color('black')
+    ax.spines['left'].set_color('black')
+    ax.spines['right'].set_color('black')
+    ax.set_xlabel(r"$r$", size='xx-large', labelpad=10)
+    ax.set_ylabel(r"$He$", size='xx-large', labelpad=20)
+    ax.zaxis.set_rotate_label(False)
+    ax.set_zlabel(r"$u^+$", size='xx-large', labelpad=20, rotation=0)
+    ax.view_init(elev=5, azim=80)
+
+    plt.savefig('tutorial_plots/laminar_HB_flow_renormalized.pdf', format='pdf',
+                dpi=1200)
     plt.show()
