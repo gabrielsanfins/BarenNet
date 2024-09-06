@@ -1,54 +1,61 @@
 import numpy as np
 
 
-def find_buckingham_group_exponents_matrix(A_matrix: np.ndarray,
-                                           B_matrix: np.ndarray) -> np.ndarray:
-    """
+class GroupExponentCalculator:
 
-    Finds the Buckingham's similarity group exponents matrix Delta by solving
-    the linear matrix equation B_matrix * Delta = A_matrix
+    def __init__(self) -> None:
+        pass
 
-    """
-    delta_matrix = np.linalg.solve(B_matrix, A_matrix)
-    return delta_matrix
+    def find_buckingham_group_exponents_matrix(
+            self,
+            A_matrix: np.ndarray,
+            B_matrix: np.ndarray) -> np.ndarray:
+        """
 
+        Finds the Buckingham's similarity group exponents matrix Delta by
+        solving the linear matrix equation B_matrix * Delta = A_matrix.
 
-def find_renormalization_group_exponents_matrix(
-        Xi_matrix: np.ndarray,
-        B_matrix: np.ndarray,
-        n: int, l: int) -> np.ndarray:
-    """
+        """
+        delta_matrix = np.linalg.solve(B_matrix, A_matrix)
+        return delta_matrix
 
-    Finds the Renormalization group exponents matrix. Xi is the matrix of the
-    incomplete similarity exponents, B_matrix is the beta matrix and n and l
-    are integers that represent the quantity of similar parameters and total
-    dimensionless quantities respectively.
+    def find_renormalization_group_exponents_matrix(
+            self,
+            Xi_matrix: np.ndarray,
+            B_matrix: np.ndarray,
+            n: int, l: int) -> np.ndarray:
+        """
 
-    COMPLETE THIS DESCRIPTION BY REFERENCING THE THESIS OR THE README FOR THE
-    MATRIX CONSTRUCTIONS AND CALCULATIONS DONE HERE.
+        Finds the Renormalization group exponents matrix. Xi is the matrix of
+        the incomplete similarity exponents, B_matrix is the beta matrix and n
+        and l are integers that represent the quantity of similar parameters
+        and total dimensionless quantities respectively.
 
-    """
-    A_renorm_matrix = np.zeros(shape=(n, n))
-    B_renorm_matrix = np.zeros(shape=(n, l-n))
+        COMPLETE THIS DESCRIPTION BY REFERENCING THE THESIS OR THE README FOR
+        THE MATRIX CONSTRUCTIONS AND CALCULATIONS DONE HERE.
 
-    for i in range(n):
-        beta_n_vector = B_matrix[i, :n]
-        vector_sum = np.zeros(shape=(1, n))
-        for j in range(l-n):
-            vector_sum += Xi_matrix[i, j] * B_matrix[n+j, :n]
+        """
+        A_renorm_matrix = np.zeros(shape=(n, n))
+        B_renorm_matrix = np.zeros(shape=(n, l-n))
 
-        A_renorm_matrix[i, :] = beta_n_vector + vector_sum
+        for i in range(n):
+            beta_n_vector = B_matrix[i, :n]
+            vector_sum = np.zeros(shape=(1, n))
+            for j in range(l-n):
+                vector_sum += Xi_matrix[i, j] * B_matrix[n+j, :n]
 
-    for i in range(n):
-        for j in range(l-n):
-            beta = B_matrix[i, n+j]
-            beta_sum = 0
+            A_renorm_matrix[i, :] = beta_n_vector + vector_sum
 
-            for k in range(l-n):
-                beta_sum += Xi_matrix[i, k] * B_matrix[n+k, n+j]
+        for i in range(n):
+            for j in range(l-n):
+                beta = B_matrix[i, n+j]
+                beta_sum = 0
 
-            B_renorm_matrix[i, j] = - (beta + beta_sum)
+                for k in range(l-n):
+                    beta_sum += Xi_matrix[i, k] * B_matrix[n+k, n+j]
 
-    Mu_matrix = np.linalg.solve(A_renorm_matrix, B_renorm_matrix)
+                B_renorm_matrix[i, j] = - (beta + beta_sum)
 
-    return Mu_matrix
+        Mu_matrix = np.linalg.solve(A_renorm_matrix, B_renorm_matrix)
+
+        return Mu_matrix

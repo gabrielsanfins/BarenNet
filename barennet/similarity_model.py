@@ -1,8 +1,7 @@
 from typing import List, Dict
 import numpy as np
 
-from .group_calculations import (find_buckingham_group_exponents_matrix,
-                                 find_renormalization_group_exponents_matrix)
+from .group_calculations import GroupExponentCalculator
 from .barennet import create_barennet
 from .utils import adjust_dataframe_according_to_similarity
 
@@ -56,6 +55,7 @@ class SimilarityModel:
                 )
             )
 
+        self.group_exponent_calculator = GroupExponentCalculator()
         self.dimensionally_independent_params = (
                                             dimensionally_independent_params)
         self.dimensionally_dependent_params = dimensionally_dependent_params
@@ -70,7 +70,7 @@ class SimilarityModel:
         self.found_incomplete_similarity = False
 
         self.A_matrix, self.B_matrix = self._create_exponents_matrices()
-        self.Delta_matrix = find_buckingham_group_exponents_matrix(
+        self.Delta_matrix = self.group_exponent_calculator.find_buckingham_group_exponents_matrix(
             self.A_matrix, self.B_matrix)
 
         self._create_buckingham_similarity_group()
@@ -372,7 +372,7 @@ class SimilarityModel:
         l = len(self.dimensionally_dependent_params)
         n = len(self.non_similar_params)
 
-        self.Mu_Matrix = find_renormalization_group_exponents_matrix(
+        self.Mu_Matrix = self.group_exponent_calculator.find_renormalization_group_exponents_matrix(
             Xi_matrix=self.Xi_matrix,
             B_matrix=self.B_matrix,
             n=n, l=l
